@@ -1,0 +1,15 @@
+@import 'reset';
+
+$fontSize : 16;
+
+// 1rem = fontSize  px
+// 1 / fontSize = rem
+@function px2rem($px){
+    @return ($px / $fontSize) + rem;
+}
+
+@mixin center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
