@@ -8,10 +8,10 @@
         <div class="icon-box">
           <span class="icon icon-huakuai"></span>
         </div>
-        <div class="icon-box">
+        <div class="icon-box" @click="setSetting(1)">
           <span class="icon icon-ai250"></span>
         </div>
-        <div class="icon-box" @click="showSetting = !showSetting">
+        <div class="icon-box" @click="setSetting(0)">
           <span class="icon icon-A"></span>
         </div>
       </div>
@@ -19,7 +19,8 @@
     <!-- 设置 -->
     <transition name="slide-up">
       <div class="setting-box" v-show="showSetting">
-        <div class="setting-font-size">
+        <!-- 字体 -->
+        <div class="setting-font-size" v-if="showTag == 0">
           <!-- 最小字体 -->
           <div class="preview" :style="{fontSize: fontSizeList[0].fontSize+'px'}">A</div>
           <!-- 选择线条 -->
@@ -41,6 +42,13 @@
             :style="{fontSize: fontSizeList[fontSizeList.length - 1].fontSize+'px'}"
           >A</div>
         </div>
+        <!-- 主题 -->
+        <div class="setting-theme" v-else-if="showTag == 1">
+          <div class="setting-item" v-for="(item, index) in themeList" :key="index" @click="setTheme(index)">
+            <div class="preview" :class="{'hasborder': index === defaultTheme}" :style="{background: item.style.body.background}"></div>
+            <div class="text" :class="{'selected':index === defaultTheme}">{{item.name}}</div>
+          </div>
+        </div>
       </div>
     </transition>
   </div>
@@ -57,11 +65,14 @@ export default {
     },
     defaultFontSize: {
       type: Number
-    }
+    },
+    defaultTheme: Number,
+    themeList: Array
   },
   data() {
     return {
-      showSetting: false
+      showSetting: false,
+      showTag: 0
     };
   },
   watch: {
@@ -71,11 +82,18 @@ export default {
       }
     }
   },
-  methods:{
-    changeSize(fontSize){
-      // this.defaultFontSize = fontSize
+  methods: {
+    // 设置主题
+    setTheme(index){
+      this.$emit('setTheme',index)
+    },
+    setSetting(tag) {
+      this.showSetting = !this.showSetting;
+      this.showTag = tag;
+    },
+    changeSize(fontSize) {
       // 子向父传递数据触发的自定义事件
-      this.$emit('changeSize',fontSize)
+      this.$emit("changeSize", fontSize);
     }
   }
 };
@@ -151,7 +169,7 @@ export default {
             border-left: px2rem(2) solid #ccc;
             .point {
               position: absolute;
-              top: -(px2rem(.2));
+              top: -(px2rem(0.2));
               left: -(px2rem(4.5));
               width: px2rem(9);
               height: px2rem(9);
@@ -168,6 +186,29 @@ export default {
                 background: #000;
               }
             }
+          }
+        }
+      }
+    }
+    .setting-theme {
+      height: 100%;
+      display: flex;
+      cursor: pointer;
+      .setting-item {
+        flex: 1;
+        @include column;
+        .preview {
+          width: 50%;
+          height: 50%;
+          &.hasborder{
+            border: 1px solid #ccc;
+          }
+        }
+        .text {
+          font-size: px2rem(8);
+          color: #ccc;
+          &.selected {
+            color: #333;
           }
         }
       }

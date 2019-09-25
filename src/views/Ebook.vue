@@ -11,7 +11,15 @@
       <div class="next" @click="nextPage"></div>
     </div>
     <!-- 底部栏 -->
-    <BottomBar :flag="flag" :fontSizeList="fontSizeList" :defaultFontSize='defaultFontSize' @changeSize='changeSize' />
+    <BottomBar
+      :flag="flag"
+      :fontSizeList="fontSizeList"
+      :defaultFontSize="defaultFontSize"
+      @changeSize="changeSize"
+      @setTheme='setTheme'
+      :themeList='themeList'
+      :defaultTheme='defaultTheme'
+    />
   </div>
 </template>
 
@@ -40,14 +48,67 @@ export default {
         { fontSize: 22 },
         { fontSize: 24 }
       ],
-      defaultFontSize:16
+      // 默认字体大小
+      defaultFontSize: 16,
+      // 主题
+      themeList: [
+        {
+          name: "default",
+          style: {
+            body: {
+              color: "#000",
+              background: "#fff"
+            }
+          }
+        },
+        {
+          name: "eye",
+          style: {
+            body: {
+              color: "#000",
+              background: "#bfa"
+            }
+          }
+        },
+        {
+          name: "night",
+          style: {
+            body: {
+              color: "#c3602c",
+              background: "#1e1e1e"
+            }
+          }
+        },
+        {
+          name: "gold",
+          style: {
+            body: {
+              color: "#000",
+              background: "rgba(241,236,226)"
+            }
+          }
+        }
+      ],
+      defaultTheme: 0
     };
   },
   methods: {
+    // 设置主题
+    setTheme(index) {
+      this.theme.select(this.themeList[index].name);
+      this.defaultTheme = index;
+      localStorage.setItem('theme',this.defaultTheme)
+    },
+    // 注册主题
+    registerThemes() {
+      this.themeList.forEach((item, index) => {
+        this.theme.register(item.name, item.style);
+      });
+    },
     // 子向父传递数据触发的自定义事件
-    changeSize(fontSize){
-      this.defaultFontSize = fontSize
-      this.theme.fontSize(fontSize + 'px')
+    changeSize(fontSize) {
+      this.defaultFontSize = fontSize;
+      this.theme.fontSize(fontSize + "px");
     },
     showBook() {
       // 创建Book对象
@@ -61,9 +122,16 @@ export default {
       // 渲染电子书
       this.rendtion.display();
       // 获取theme对象
-      this.theme = this.rendtion.themes
+      this.theme = this.rendtion.themes;
       // 设置默认字体大小
-      this.changeSize(this.defaultFontSize)
+      this.changeSize(this.defaultFontSize);
+      // 注册主题
+      this.registerThemes();
+      // 获取主题,如果浏览设置过
+      let userTheme = localStorage.getItem('theme')
+      this.defaultTheme = userTheme ? parseInt(userTheme) : this.defaultTheme
+      // 设置主题
+      this.setTheme(this.defaultTheme);
     },
     prevPage() {
       // Rendition.prev
@@ -80,6 +148,9 @@ export default {
   },
   created() {
     this.showBook();
+  },
+  beforeDestroy(){
+    
   }
 };
 </script>

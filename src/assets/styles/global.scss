@@ -14,6 +14,13 @@ $fontSize : 16;
     align-items: center;
 }
 
+@mixin column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
 .icon {
     font-size: px2rem(10);
 }
@@ -32,7 +39,7 @@ $fontSize : 16;
 .slide-enter-to,
 .slide-leave,
 .slide-up-enter-to,
-.slide-up-leave  {
+.slide-up-leave {
     transform: translate(0, 0);
     opacity: 1;
 }
