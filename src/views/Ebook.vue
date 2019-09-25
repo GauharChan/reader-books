@@ -1,18 +1,20 @@
 <template>
   <div class="ebook">
     <!-- 头部菜单栏 -->
-    <div :class="{'title-top':true,'show':flag}">
-      <div class="title-left">
-        <span class="icon icon-xiaoyuhao"></span>
-      </div>
-      <div class="title-right">
-        <div class="right-icon-box">
-          <span class="icon icon-cart_icon"></span>
-          <span class="icon icon-wode"></span>
-          <span class="icon icon-gengduo"></span>
+    <transition name="slide">
+      <div class="title-top" v-show="flag">
+        <div class="title-left">
+          <span class="icon icon-xiaoyuhao"></span>
+        </div>
+        <div class="title-right">
+          <div class="right-icon-box">
+            <span class="icon icon-cart_icon"></span>
+            <span class="icon icon-wode"></span>
+            <span class="icon icon-gengduo"></span>
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
     <!-- 电子书容器 -->
     <div id="book"></div>
     <!-- 遮罩层 -->
@@ -22,12 +24,22 @@
       <div class="next" @click="nextPage"></div>
     </div>
     <!-- 底部栏 -->
-    <div :class="{'bottom-box': true,'show':flag}">
-      <div class="icon-box"><span class="icon icon-mulu"></span></div>
-      <div class="icon-box"><span class="icon icon-huakuai"></span></div>
-      <div class="icon-box"><span class="icon icon-ai250"></span></div>
-      <div class="icon-box"><span class="icon icon-A"></span></div>
-    </div>
+    <transition name="slide-up">
+      <div class="bottom-box" v-show="flag">
+        <div class="icon-box">
+          <span class="icon icon-mulu"></span>
+        </div>
+        <div class="icon-box">
+          <span class="icon icon-huakuai"></span>
+        </div>
+        <div class="icon-box">
+          <span class="icon icon-ai250"></span>
+        </div>
+        <div class="icon-box">
+          <span class="icon icon-A"></span>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -76,14 +88,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "@/assets/styles/global.scss";
-.show{
-  opacity: 1 !important;
-}
 
 .ebook {
   position: relative;
   .title-top {
-    opacity: 0;
     width: 100%;
     position: fixed;
     top: 0;
@@ -95,6 +103,7 @@ export default {
     height: px2rem(25);
     box-shadow: 0px px2rem(-4) px2rem(10) black;
     background-color: #fff;
+    padding: 0 px2rem(10);
     .title-left {
       @include center;
     }
@@ -104,6 +113,7 @@ export default {
       align-items: center;
       justify-content: space-between;
     }
+    
   }
   // 遮罩层
   .mask {
@@ -126,10 +136,9 @@ export default {
   }
 
   // bottom
-  .bottom-box{
-    opacity: 0;
+  .bottom-box {
     position: fixed;
-    bottom:0;
+    bottom: 0;
     left: 0;
     width: 100%;
     height: px2rem(25);
@@ -137,13 +146,13 @@ export default {
     z-index: 101;
     box-shadow: 0 px2rem(4) px2rem(10) black;
     background-color: #fff;
-    .icon-box{
+    .icon-box {
       flex: 1;
       @include center;
-      .icon-huakuai{
+      .icon-huakuai {
         font-size: px2rem(12);
       }
-      .icon-A{
+      .icon-A {
         font-size: px2rem(7);
       }
     }

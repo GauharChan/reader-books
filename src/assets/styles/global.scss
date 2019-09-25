@@ -4,8 +4,8 @@ $fontSize : 16;
 
 // 1rem = fontSize  px
 // 1 / fontSize = rem
-@function px2rem($px){
-    @return ($px / $fontSize) + rem;
+@function px2rem($px) {
+    @return ($px / $fontSize)+rem;
 }
 
 @mixin center {
@@ -13,6 +13,36 @@ $fontSize : 16;
     justify-content: center;
     align-items: center;
 }
-.icon{
+
+.icon {
     font-size: px2rem(10);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+// 过渡  slide 向下滑动  slide-up 向上滑动
+.slide-enter,
+.slide-leave-to {
+    transform: translate(0, -100%);
+}
+
+.slide-enter-to,
+.slide-leave,
+.slide-up-enter-to,
+.slide-up-leave  {
+    transform: translate(0, 0);
+}
+
+.slide-enter-active,
+.slide-leave-active,
+.slide-up-enter-active,
+.slide-up-leave-active {
+    transition: transform 0.3s;
+}
+
+.slide-up-enter,
+.slide-up-leave-to {
+    transform: translate(0, 100%);
 }
