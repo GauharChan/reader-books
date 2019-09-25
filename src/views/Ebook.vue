@@ -11,29 +11,44 @@
       <div class="next" @click="nextPage"></div>
     </div>
     <!-- 底部栏 -->
-    <BottomBar :flag="flag"/>
+    <BottomBar :flag="flag" :fontSizeList="fontSizeList" :defaultFontSize='defaultFontSize' @changeSize='changeSize' />
   </div>
 </template>
 
 <script>
-import TitleBar from '@/components/TitleTop'
-import BottomBar from '@/components/BottomBox'
+import TitleBar from "@/components/TitleTop";
+import BottomBar from "@/components/BottomBox";
 import Epub from "epubjs";
 
 // 静态资源必须放在public文件夹下
 // const DOWNLOAD_URL = '/AEN.epub'
 const DOWNLOAD_URL = "/unknownJS.epub";
 export default {
-  components:{
+  components: {
     TitleBar,
     BottomBar
   },
   data() {
     return {
-      flag: false
+      flag: false,
+      fontSizeList: [
+        { fontSize: 12 },
+        { fontSize: 14 },
+        { fontSize: 16 },
+        { fontSize: 18 },
+        { fontSize: 20 },
+        { fontSize: 22 },
+        { fontSize: 24 }
+      ],
+      defaultFontSize:16
     };
   },
   methods: {
+    // 子向父传递数据触发的自定义事件
+    changeSize(fontSize){
+      this.defaultFontSize = fontSize
+      this.theme.fontSize(fontSize + 'px')
+    },
     showBook() {
       // 创建Book对象
       this.book = new Epub(DOWNLOAD_URL);
@@ -45,6 +60,10 @@ export default {
       });
       // 渲染电子书
       this.rendtion.display();
+      // 获取theme对象
+      this.theme = this.rendtion.themes
+      // 设置默认字体大小
+      this.changeSize(this.defaultFontSize)
     },
     prevPage() {
       // Rendition.prev
@@ -69,7 +88,7 @@ export default {
 
 .ebook {
   position: relative;
-  
+
   // 遮罩层
   .mask {
     position: absolute;
@@ -89,7 +108,5 @@ export default {
       flex: 0 0 px2rem(100);
     }
   }
-
-  
 }
 </style>
