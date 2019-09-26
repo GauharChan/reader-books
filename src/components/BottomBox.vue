@@ -2,10 +2,10 @@
   <div class="bottom">
     <transition name="slide-up">
       <div class="bottom-box" v-show="flag">
-        <div class="icon-box">
+        <div class="icon-box" @click="showMenu = !showMenu">
           <span class="icon icon-mulu"></span>
         </div>
-        <div class="icon-box">
+        <div class="icon-box" @click="setSetting(2)">
           <span class="icon icon-huakuai"></span>
         </div>
         <div class="icon-box" @click="setSetting(1)">
@@ -44,10 +44,47 @@
         </div>
         <!-- 主题 -->
         <div class="setting-theme" v-else-if="showTag == 1">
-          <div class="setting-item" v-for="(item, index) in themeList" :key="index" @click="setTheme(index)">
-            <div class="preview" :class="{'hasborder': index === defaultTheme}" :style="{background: item.style.body.background}"></div>
+          <div
+            class="setting-item"
+            v-for="(item, index) in themeList"
+            :key="index"
+            @click="setTheme(index)"
+          >
+            <div
+              class="preview"
+              :class="{'hasborder': index === defaultTheme}"
+              :style="{background: item.style.body.background}"
+            ></div>
             <div class="text" :class="{'selected':index === defaultTheme}">{{item.name}}</div>
           </div>
+        </div>
+        <!-- 进度条 -->
+        <div class="setting-progress" v-else-if="showTag == 2">
+          <div class="progress-box">
+            <input
+              class="progress"
+              type="range"
+              max="100"
+              min="0"
+              step="1"
+              @change="handleProgressChange"
+              @input="handleProgressInput"
+              :disabled="!bookUsable"
+              :value="progress"
+              ref="progressRef"
+            />
+            <div class="tips">
+              <span>{{bookUsable ? progress + '%' : '加载中...'}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+    <transition name="fade">
+      <!-- 菜单 -->
+      <div class="mask" v-if="showMenu">
+        <div class="setting-menu">
+          <div class="menu-item" v-for="(item, index) in toc" :key="index">{{item.href}}</div>
         </div>
       </div>
     </transition>
@@ -57,22 +94,29 @@
 export default {
   props: {
     flag: {
+      // 上下栏的显示隐藏
       type: Boolean,
       default: false
     },
     fontSizeList: {
+      // 可选字体大小列表
       type: Array
     },
     defaultFontSize: {
+      // 默认字体大小
       type: Number
     },
-    defaultTheme: Number,
-    themeList: Array
+    defaultTheme: Number, // 默认主题
+    themeList: Array, // 主题列表
+    bookUsable: Boolean, // 电子书加载状态
+    toc: Array // 菜单
   },
   data() {
     return {
       showSetting: false,
-      showTag: 0
+      showTag: 0,
+      // 初始化的页码数
+      progress: 0
     };
   },
   watch: {
@@ -83,9 +127,18 @@ export default {
     }
   },
   methods: {
+    // 百分比的变化
+    handleProgressInput(e) {
+      this.progress = e.target.value;
+      this.$refs.progressRef.style.backgroundSize = `${this.progress}% 100%`;
+    },
+    // 拖动翻页
+    handleProgressChange(e) {
+      this.$emit("handleProgressChange", e.target.value);
+    },
     // 设置主题
-    setTheme(index){
-      this.$emit('setTheme',index)
+    setTheme(index) {
+      this.$emit("setTheme", index);
     },
     setSetting(tag) {
       this.showSetting = !this.showSetting;
@@ -200,7 +253,7 @@ export default {
         .preview {
           width: 50%;
           height: 50%;
-          &.hasborder{
+          &.hasborder {
             border: 1px solid #ccc;
           }
         }
@@ -209,6 +262,36 @@ export default {
           color: #ccc;
           &.selected {
             color: #333;
+          }
+        }
+      }
+    }
+    .setting-progress {
+      .progress-box {
+        input {
+          -webkit-appearance: none;
+          width: 100%;
+          height: px2rem(2);
+          background: linear-gradient(#999, #999) no-repeat #ddd;
+          background-size: 0% 100%;
+          &:focus {
+            outline: none;
+          }
+          &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: px2rem(9);
+            height: px2rem(9);
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            background-color: #fff;
+            box-shadow: 0 px2rem(2) px2rem(4) rgba(0, 0, 0, 0.25);
+          }
+        }
+        .tips {
+          @include center;
+          span {
+            font-size: px2rem(8);
+            color: rgb(61, 60, 60);
           }
         }
       }

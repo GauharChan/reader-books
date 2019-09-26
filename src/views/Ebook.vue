@@ -19,6 +19,10 @@
       @setTheme='setTheme'
       :themeList='themeList'
       :defaultTheme='defaultTheme'
+      :bookUsable='bookUsable'
+      @handleProgressChange='handleProgressChange'
+      @jumpTo='jumpTo'
+      :toc='navigation.toc'
     />
   </div>
 </template>
@@ -89,10 +93,23 @@ export default {
           }
         }
       ],
-      defaultTheme: 0
+      defaultTheme: 0,
+      bookUsable: false,  // 是否加载完成locations对象
+      navigation: {}
     };
   },
   methods: {
+    // 菜单跳转
+    jumpTo(href){
+      this.flag = false;
+      this.rendtion.display(href)
+    },
+    // 进度条
+    handleProgressChange(num){
+      const percentage = num / 100;
+      const location = percentage > 0 ? this.locations.cfiFromPercentage(percentage) : 0;
+      this.rendtion.display(location)
+    },
     // 设置主题
     setTheme(index) {
       this.theme.select(this.themeList[index].name);
@@ -132,6 +149,14 @@ export default {
       this.defaultTheme = userTheme ? parseInt(userTheme) : this.defaultTheme
       // 设置主题
       this.setTheme(this.defaultTheme);
+      // 获取locations对象
+      this.book.ready.then(() => {
+        this.navigation = this.book.navigation
+        return this.book.locations.generate()
+      }).then((res) => {
+        this.locations = this.book.locations
+        this.bookUsable = true
+      })
     },
     prevPage() {
       // Rendition.prev
