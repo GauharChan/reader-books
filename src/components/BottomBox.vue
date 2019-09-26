@@ -2,7 +2,7 @@
   <div class="bottom">
     <transition name="slide-up">
       <div class="bottom-box" v-show="flag">
-        <div class="icon-box" @click="showMenu = !showMenu">
+        <div class="icon-box" @click="menuControll(1)">
           <span class="icon icon-mulu"></span>
         </div>
         <div class="icon-box" @click="setSetting(2)">
@@ -80,12 +80,23 @@
         </div>
       </div>
     </transition>
-    <transition name="fade">
-      <!-- 菜单 -->
-      <div class="mask" v-if="showMenu">
-        <div class="setting-menu">
-          <div class="menu-item" v-for="(item, index) in toc" :key="index">{{item.href}}</div>
-        </div>
+
+    <!-- 菜单 -->
+    <transition name="mask-box">
+      <div class="mask" v-show="showMenu">
+        <transition name="fade">
+          <div class="setting-menu" v-show="showMenu">
+            <div
+              class="menu-item"
+              @click="jumpTo(item.href)"
+              v-for="(item, index) in toc"
+              :key="index"
+            >{{item.label}}</div>
+          </div>
+        </transition>
+        <transition name="mask">
+          <div class="close" ref="close" @click="menuControll(0)" v-show="showMask"></div>
+        </transition>
       </div>
     </transition>
   </div>
@@ -116,7 +127,9 @@ export default {
       showSetting: false,
       showTag: 0,
       // 初始化的页码数
-      progress: 0
+      progress: 0,
+      showMenu: false,
+      showMask: false
     };
   },
   watch: {
@@ -127,6 +140,19 @@ export default {
     }
   },
   methods: {
+    menuControll(flag) {
+      if (flag == 1) {
+        this.showMenu = true;
+        this.showMask = true;
+      } else {
+        this.showMenu = false;
+        this.showMask = false;
+      }
+    },
+    jumpTo(href) {
+      this.menuControll(0);
+      this.$emit("jumpTo", href);
+    },
     // 百分比的变化
     handleProgressInput(e) {
       this.progress = e.target.value;
@@ -296,6 +322,71 @@ export default {
         }
       }
     }
+  }
+
+  .mask {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 102;
+    .setting-menu {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 80%;
+      height: 100%;
+      background: #fff;
+      .menu-item {
+        font-size: px2rem(10);
+        padding-left: px2rem(10);
+        cursor: pointer;
+      }
+    }
+    .close {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.7);
+    }
+  }
+  .no-back {
+    background: rgba(0, 0, 0, 0) !important;
+  }
+  // 大盒子mask-box过渡
+  .mask-box-enter,
+  .mask-box-leave-to {
+    opacity: 0;
+  }
+  .mask-box-enter-to,
+  .mask-box-leave {
+    opacity: 1;
+  }
+  // 左边菜单栏过渡
+  .fade-enter,
+  .fade-leave-to {
+    transform: translateX(-100%);
+  }
+  .fade-enter-to,
+  .fade-leave {
+    transform: translateX(0);
+  }
+  // 右边蒙版过渡
+  .mask-enter,
+  .mask-leave-to {
+    transform: translateX(100%);
+  }
+  .mask-enter-to,
+  .mask-leave {
+    transform: translateX(0);
+  }
+  .mask-enter-active,
+  .mask-leave-active,
+  .fade-enter-active,
+  .fade-leave-active,
+  .mask-box-enter-active,
+  .mask-box-leave-active {
+    transition: all 0.3s;
   }
 }
 </style>
