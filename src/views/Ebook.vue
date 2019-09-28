@@ -207,7 +207,19 @@ export default {
     this.isDisplay = false;
     this.showBook(this.DOWNLOAD_URL);
   },
-  beforeCreate() {},
+  beforeCreate() {
+    console.log("%c%s", "color: #1ddaac;", `
+    Author:Gauhar
+⊂_ヽ
+　 ＼＼  Λ＿Λ
+　　 ＼( 'ㅅ' )
+　　　 >　⌒ヽ
+　　　/ 　 へ＼
+　　 /　　/　＼＼
+　　 ﾚ　ノ　　 ヽ_つ
+　　/　/
+　 /　/|`);
+  },
   watch: {
     isDisplay(newVal, old) {
       this.isLoading = newVal ? false : true;
