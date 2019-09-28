@@ -339,9 +339,11 @@ export default {
       width: 80%;
       height: 100%;
       background: #fff;
+      overflow: scroll;
       .menu-item {
         font-size: px2rem(10);
         padding-left: px2rem(10);
+        margin-top: px2rem(5);
         cursor: pointer;
       }
     }

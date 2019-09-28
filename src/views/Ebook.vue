@@ -24,7 +24,8 @@
       @jumpTo="jumpTo"
       :toc="navigation.toc"
     />
-    <div class="load" v-show="isLoading">loading...</div>
+    <!-- <div class="load" ref="preload">loading...</div> -->
+    <div class="load" ref="load" v-show="isLoading">loading...</div>
   </div>
 </template>
 
@@ -37,6 +38,9 @@ import Epub from "epubjs";
 // const DOWNLOAD_URL = '/AEN.epub'
 // const DOWNLOAD_URL = "/unknownJS.epub";
 // const DOWNLOAD_URL = "/unknownJSlast.epub";
+// window.addEventListener('DOMContentLoaded',function(){
+
+// });
 export default {
   components: {
     TitleBar,
@@ -105,14 +109,14 @@ export default {
         "你不知道的JavaScript(下卷).epub"
       ],
       DOWNLOAD_URL: "/你不知道的JavaScript(上卷).epub",
-      isLoading: false
+      isLoading: true
     };
   },
   methods: {
     handleChange(item) {
       // 先把原来的实例销毁
       this.book.destroy();
-      this.isDisplay = false
+      this.isDisplay = false;
       const url = "/" + item;
       this.showBook(url);
       this.flag = false;
@@ -147,39 +151,46 @@ export default {
       this.theme.fontSize(fontSize + "px");
     },
     showBook(url) {
-      // 创建Book对象
-      this.book = new Epub(url);
-      // 通过Book对象的renderTo方法生成rendtion
-      this.rendtion = this.book.renderTo("book", {
-        // book 是dom元素的id
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
-      // 渲染电子书
-      this.rendtion.display().then((res) => {
-        this.isDisplay = true
-      })
-      // 获取theme对象
-      this.theme = this.rendtion.themes;
-      // 设置默认字体大小
-      this.changeSize(this.defaultFontSize);
-      // 注册主题
-      this.registerThemes();
-      // 获取主题,如果浏览设置过
-      let userTheme = localStorage.getItem("theme");
-      this.defaultTheme = userTheme ? parseInt(userTheme) : this.defaultTheme;
-      // 设置主题
-      this.setTheme(this.defaultTheme);
-      // 获取locations对象
-      this.book.ready
-        .then(() => {
-          this.navigation = this.book.navigation;
-          return this.book.locations.generate();
-        })
-        .then(res => {
-          this.locations = this.book.locations;
-          this.bookUsable = true;
+      new Promise((resolve, reject) => {
+        let book = new Epub(url);
+        resolve(book);
+      }).then(book => {
+        this.book = book;
+        // 创建Book对象
+        // this.book = new Epub(url);
+        
+        // 通过Book对象的renderTo方法生成rendtion
+        this.rendtion = this.book.renderTo("book", {
+          // book 是dom元素的id
+          width: window.innerWidth,
+          height: window.innerHeight
         });
+        // 渲染电子书
+        this.rendtion.display().then(res => {
+          this.isDisplay = true;
+        });
+        // 获取theme对象
+        this.theme = this.rendtion.themes;
+        // 设置默认字体大小
+        this.changeSize(this.defaultFontSize);
+        // 注册主题
+        this.registerThemes();
+        // 获取主题,如果浏览设置过
+        let userTheme = localStorage.getItem("theme");
+        this.defaultTheme = userTheme ? parseInt(userTheme) : this.defaultTheme;
+        // 设置主题
+        this.setTheme(this.defaultTheme);
+        // 获取locations对象
+        this.book.ready
+          .then(() => {
+            this.navigation = this.book.navigation;
+            return this.book.locations.generate();
+          })
+          .then(res => {
+            this.locations = this.book.locations;
+            this.bookUsable = true;
+          });
+      });
     },
     prevPage() {
       // Rendition.prev
@@ -195,12 +206,13 @@ export default {
     }
   },
   mounted() {
-    this.isDisplay = false
+    this.isDisplay = false;
     this.showBook(this.DOWNLOAD_URL);
   },
+  beforeCreate() {},
   watch: {
     isDisplay(newVal, old) {
-      this.isLoading = newVal ? false : true
+      this.isLoading = newVal ? false : true;
     }
   }
 };
@@ -209,13 +221,14 @@ export default {
 @import "@/assets/styles/global.scss";
 
 @media screen and (max-width: 800px) {
-    .ebook{
-      .mask{
-        .pre,.next{
-          flex: 0 0 px2rem(50) !important;
-        }
+  .ebook {
+    .mask {
+      .pre,
+      .next {
+        flex: 0 0 px2rem(50) !important;
       }
     }
+  }
 }
 .ebook {
   position: relative;
@@ -240,14 +253,14 @@ export default {
     }
   }
 }
-.load{
+.load {
   @include center;
   width: 100%;
   height: 100%;
   position: fixed;
   top: 0;
   left: 0;
-  background: rgba(0,0,0,.8);
+  background: rgba(0, 0, 0, 0.8);
   color: rgb(133, 204, 204);
 }
 </style>

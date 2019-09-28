@@ -106,6 +106,4 @@ export default {
     line-height: px2rem(10);
   }
 }
-
-
 </style>
