@@ -157,8 +157,6 @@ export default {
       }).then(book => {
         this.book = book;
         // 创建Book对象
-        // this.book = new Epub(url);
-        
         // 通过Book对象的renderTo方法生成rendtion
         this.rendtion = this.book.renderTo("book", {
           // book 是dom元素的id
