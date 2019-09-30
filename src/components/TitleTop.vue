@@ -8,7 +8,7 @@
         <div class="title-right">
           <div class="right-icon-box">
             <span class="icon icon-cart_icon"></span>
-            <span class="icon icon-wode"></span>
+            <span class="icon icon-wode" @click="handleMe"></span>
             <span class="icon icon-gengduo" @click="handleSetting()"></span>
           </div>
         </div>
@@ -51,6 +51,9 @@ export default {
     }
   },
   methods: {
+    handleMe(){
+      window.location.href = "https://gauhar.gitee.io"
+    },
     handleSetting() {
       this.showSetting = !this.showSetting;
     },

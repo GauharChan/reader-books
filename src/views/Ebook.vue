@@ -208,8 +208,11 @@ export default {
     this.showBook(this.DOWNLOAD_URL);
   },
   beforeCreate() {
-    console.log("%c%s", "color: #1ddaac;", `
-    Author:Gauhar
+    console.log(
+      "%c%s",
+      "color: #1ddaac;",
+      `
+    Author:Gauhar       blog:https://gauhar.gitee.io
 ⊂_ヽ
 　 ＼＼  Λ＿Λ
 　　 ＼( 'ㅅ' )
@@ -218,7 +221,9 @@ export default {
 　　 /　　/　＼＼
 　　 ﾚ　ノ　　 ヽ_つ
 　　/　/
-　 /　/|`);
+　 /　/|
+`
+    );
   },
   watch: {
     isDisplay(newVal, old) {
